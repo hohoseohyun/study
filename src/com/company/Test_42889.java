@@ -1,47 +1,42 @@
 package com.company;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 class Test_42889 {
-    public int[] solution(int N, int[] stages) {
-        String[] tmp = new String[N];
-        int[] answer = new int[N];
+    public int[] solution(int n, int[] stages) {
+        int[] clear = new int[n + 2];
+        float[][] fail = new float[n][2];
+        int[] answer = new int[n];
+        int[] person = new int[n + 2];
 
-        int tryCount = 0;
-        int fail = 0;
-        for (int j = 0; j < N; j++) {
-            for (int i = 0; i < stages.length; i++) {
-                if (stages[i] > j) {
-                    tryCount++;
-                }
-                if (stages[i] == j + 1) {
-                    fail++;
-                }
+        for (int i : stages) clear[i]++;
+
+        person[0] = stages.length;
+        for (int i = 1; i < n + 2; i++) {
+            person[i] = person[i - 1] - clear[i - 1];
+        }
+
+        for (int i = 1; i < n + 1; i++) {
+            if (person[i] == 0) fail[i - 1][0] = -1;
+            else
+                fail[i - 1][0] = clear[i] / (float) person[i];
+            fail[i - 1][1] = i;
+        }
+
+        Arrays.sort(fail, new Comparator<float[]>() {
+            @Override
+            public int compare(float[] o1, float[] o2) {
+                // TODO Auto-generated method stub
+                if (o1[0] == o2[0]) return 0;
+                return (o1[0] < o2[0]) ? 1 : -1;
             }
-            tmp[j] = String.valueOf(j + 1) + "/" + String.valueOf(fail * Math.pow(tryCount, -1));
-            tryCount = 0;
-            fail = 0;
+        });
+
+        for (int i = 0; i < n; i++) {
+            answer[i] = (int) fail[i][1];
         }
 
-        String temp;
-        for (int i = 0; i < tmp.length; i++) {
-            for (int k = i; k < tmp.length; k++) {
-                if (Double.valueOf(tmp[k].split("/")[1]) > Double.valueOf(tmp[i].split("/")[1])) {
-                    temp = tmp[i];
-                    tmp[i] = tmp[k];
-                    tmp[k] = temp;
-                }
-                if (Double.valueOf(tmp[k].split("/")[1]).equals(Double.valueOf(tmp[i].split("/")[1]))) {
-                    if (Double.valueOf(tmp[k].split("/")[0]) < Double.valueOf(tmp[i].split("/")[0])) {
-                        temp = tmp[i];
-                        tmp[i] = tmp[k];
-                        tmp[k] = temp;
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < tmp.length; i++) {
-            answer[i] = Integer.valueOf(tmp[i].split("/")[0]);
-        }
         return answer;
     }
 

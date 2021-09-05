@@ -1,44 +1,53 @@
 package com.company;
 
-import java.util.Arrays;
-
 public class Test_68935 {
     public String solution(int[] numbers, String hand) {
         String answer = "";
-// L -> * R -> #
-// 1,4,7 -> L
-// 3,6,9 -> R
-// 2,5,8,0 계산
-        String[] result = new String[numbers.length];
 
-        String now = "";
-        int leftPosition = 0;
-        int rightPosition = 0;
+        int leftPosition = 10;
+        int rightPosition = 12;
+
         for (int i = 0; i < numbers.length; i++) {
             if (numbers[i] == 1 || numbers[i] == 4 || numbers[i] == 7) {
-                result[i] = "L";
-                now = "L";
+                answer += "L";
                 leftPosition = numbers[i];
             } else if (numbers[i] == 3 || numbers[i] == 6 || numbers[i] == 9) {
-                result[i] = "R";
-                now = "R";
+                answer += "R";
                 rightPosition = numbers[i];
             } else {
-                int check = numbers[i] % 3;
-                if (check - leftPosition % 3 < check - rightPosition % 3) {
-                    result[i] = "L";
-                    now = "L";
+                int leftCal = calcPosition(leftPosition, numbers[i]);
+                int rightCal = calcPosition(rightPosition, numbers[i]);
+
+                if (leftCal < rightCal) {
+                    answer += "L";
                     leftPosition = numbers[i];
-                } else if (check - leftPosition % 3 > check - rightPosition % 3) {
-                    result[i] = "R";
-                    now = "R";
+                } else if (leftCal > rightCal) {
+                    answer += "R";
                     rightPosition = numbers[i];
                 } else {
-                    result[i] = now;
+                    if (hand.equals("right")) {
+                        answer += "R";
+                        rightPosition = numbers[i];
+                    } else {
+                        answer += "L";
+                        leftPosition = numbers[i];
+                    }
                 }
             }
         }
-        return Arrays.stream(result).toString();
+        return answer;
+    }
+
+    public int calcPosition(int index, int number) {
+        index = index == 0 ? 11 : index;
+        number = number == 0 ? 11 : number;
+
+        int x = (index - 1) / 3;
+        int y = (index - 1) % 3;
+        int numberX = number / 3;
+        int numberY = 1;
+
+        return Math.abs(x - numberX) + Math.abs(y - numberY);
     }
 
     public static void main(String[] args) {
